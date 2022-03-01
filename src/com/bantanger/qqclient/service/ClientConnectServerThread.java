@@ -30,7 +30,7 @@ public class ClientConnectServerThread extends Thread{
         while(true){
 
             try {
-                System.out.println("客户端线程，等待读取冲服务端发送的消息");
+                System.out.println("客户端线程，等待读取从服务端发送的消息");
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                 // 如果服务端没有发送Message对象，线程会阻塞在这
                 Message message = (Message) ois.readObject();
@@ -43,6 +43,10 @@ public class ClientConnectServerThread extends Thread{
                     for (int i = 0; i < onlineUsers.length; i++) {
                         System.out.println("用户: " + onlineUsers[i]);
                     }
+                } else if (message.getMesType().equals(MessageType.MESSAGE_COMM_MES)){
+                    // 把服务端的消息显示到控制台上
+                    System.out.println("\n" + message.getSender()
+                    + " 对 " + message.getGetter() + "说:" + message.getContent());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
