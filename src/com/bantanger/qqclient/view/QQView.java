@@ -1,10 +1,13 @@
 package com.bantanger.qqclient.view;
 
+import com.bantanger.qqclient.service.FileClientSerive;
 import com.bantanger.qqclient.service.MessageClientService;
 import com.bantanger.qqclient.service.UserClientService;
 import com.bantanger.qqclient.utils.Utility;
 import com.bantanger.qqcommon.Message;
 import com.bantanger.qqcommon.MessageType;
+
+import java.io.File;
 
 /**
  * @author bantanger 半糖
@@ -16,6 +19,7 @@ public class QQView {
     private String key = ""; // 接收用户的键盘输入
     private UserClientService userClientService = new UserClientService(); // 对象时用于登陆服务器/注册用户
     private MessageClientService messageClientService = new MessageClientService(); // 对象用户私聊
+    private FileClientSerive fileClientSerive = new FileClientSerive(); // 对象用于传输文件
 
     public static void main(String[] args) {
         new QQView().mainMenu();
@@ -39,18 +43,26 @@ public class QQView {
                     userClientService.onlineFriendList(userId);
                     break;
                 case "2":
-                    System.out.println("群发消息");
+                    System.out.println("请输入想对大家说的话:");
+                    String content = Utility.readString(100);
+                    messageClientService.sendMessageToAll(content,userId);
                     break;
                 case "3":
                     System.out.print("请输入想聊天的用户号(在线):");
                     String getterId = Utility.readString(50);
                     System.out.print("请输入想说的话:");
-                    String content = Utility.readString(100);
+                    content = Utility.readString(100);
                     // 方法：将消息发送给服务器端
                     messageClientService.sendMessageToOne(content,userId,getterId);
                     break;
                 case "4":
-                    System.out.println("发送文件");
+                    System.out.print("请输入想把文件发送给的用户号(在线):");
+                    getterId = Utility.readString(50);
+                    System.out.print("请输入发送文件的路径(形式 d:\\xx.jpg):");
+                    String src = Utility.readString(100);
+                    System.out.print("请输入把文件发送到对应的路径(形式 d:\\yy.jpg):");
+                    String dest = Utility.readString(100);
+                    fileClientSerive.sendFileToOne(src,dest,userId,getterId);
                     break;
                 case "5":
                     userClientService.logout(userId);

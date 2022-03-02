@@ -14,6 +14,36 @@ import java.util.Date;
  */
 public class MessageClientService {
 
+    /**
+     * 实现群发功能
+     * @param content 要发送的内容
+     * @param senderId 发送对象
+     */
+    public void sendMessageToAll(String content,String senderId){
+        // 构建message
+        Message message = new Message();
+        message.setMesType(MessageType.MESSAGE_TO_ALL_MES); // 普通的聊天消息
+        message.setSender(senderId);
+        message.setContent(content);
+        message.setSendTime(new Date().toString()); // 发送时间设置到message
+        System.out.println(senderId + " 对 " + "大家说:" + content);
+
+        // 发送给服务器
+        try {
+            ObjectOutputStream oos =
+                    new ObjectOutputStream(ManageClientConnectServerThread.getClientConnectServerThread(senderId).getSocket().getOutputStream());
+            oos.writeObject(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 实现私聊功能
+     * @param content 要发送的内容
+     * @param senderId 发送对象
+     * @param getterId 私聊对象
+     */
     public void sendMessageToOne(String content,String senderId,String getterId){
         // 构建message
         Message message = new Message();
