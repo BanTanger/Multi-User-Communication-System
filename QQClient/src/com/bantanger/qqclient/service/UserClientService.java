@@ -25,7 +25,7 @@ public class UserClientService {
     // IP地址封装成属性，方便后期维护
     private String LocalIP = "127.0.0.1";
 
-    public boolean checkUser(String userId,String pwd){
+    public boolean checkUser(String userId, String pwd) {
         boolean flag = false;
         // 创建User对象
         user.setUseId(userId);
@@ -33,16 +33,16 @@ public class UserClientService {
 
         // 连接服务器，发送user对象
         try {
-            socket = new Socket(InetAddress.getByName(LocalIP),9999);
+            socket = new Socket(InetAddress.getByName(LocalIP), 9999);
             // 创建对象流，传输User对象到服务端
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             oos.writeObject(user); // 发送User对象
-            
+
             // 读取从服务端回复的Message对象
             ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
             Message ms = (Message) ois.readObject();
 
-            if (ms.getMesType().equals(MessageType.MESSAGE_LOGIN_SUCCEED)){
+            if (ms.getMesType().equals(MessageType.MESSAGE_LOGIN_SUCCEED)) {
                 // System.out.println("登陆成功");
                 // 创建一个和服务端保持通讯的线程 -> 创建类ClientConnectServerThread
 
@@ -50,10 +50,10 @@ public class UserClientService {
                 clientConnectServerThread.start();
 
                 // 将线程放在集合里
-                ManageClientConnectServerThread.addClientConnectServerThread(userId,clientConnectServerThread);
+                ManageClientConnectServerThread.addClientConnectServerThread(userId, clientConnectServerThread);
 
                 flag = true;
-            }else{
+            } else {
                 // System.out.println("登陆失败");
                 // 不能启动和服务器通讯的线程，但socket已经开启了，所以需要关闭socket
                 socket.close();
@@ -66,7 +66,7 @@ public class UserClientService {
     }
 
     // 向服务器端请求在线用户列表
-    public void onlineFriendList(String userId){
+    public void onlineFriendList(String userId) {
 
         // 发送一个Message，类型MESSAGE_GET_ONLINE_FRIEND
         Message message = new Message();
@@ -84,6 +84,29 @@ public class UserClientService {
             ObjectOutputStream oos =
                     new ObjectOutputStream(ManageClientConnectServerThread.getClientConnectServerThread(userId).getSocket().getOutputStream());
             oos.writeObject(message); // 发送拉取在线用户的信息的请求，服务端在线程的run方法里读取该信息
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 编写方法，退出客户端，并给服务器发送一个退出系统的message对象
+    public void logout(String userId) {
+        Message message = new Message();
+        message.setMesType(MessageType.MESSAGE_CLIENT_EXIT);
+        message.setSender(userId);// 一定要指定是哪个客户端的id
+
+        // 发送message
+        try {
+//            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+            // 获得当前连接的线程
+            ClientConnectServerThread clientConnectServerThread =
+                    ManageClientConnectServerThread.getClientConnectServerThread(userId);
+            Socket socket = clientConnectServerThread.getSocket(); // 得到当前线程端口
+            ObjectOutputStream oos =
+                    new ObjectOutputStream(socket.getOutputStream()); // 通过当前线程，得到对象流
+            oos.writeObject(message);
+            System.out.println(userId + " 退出系统");
+            System.exit(0);
         } catch (IOException e) {
             e.printStackTrace();
         }

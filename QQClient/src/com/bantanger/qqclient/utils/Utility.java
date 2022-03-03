@@ -164,7 +164,7 @@ public class Utility {
 
 			//如果用户输入的内容大于了 limit，就提示重写输入  
 			//如果用户如的内容 >0 <= limit ,我就接受
-            if (line.length() < 1 || line.length() > limit) {
+            if (line.length() > limit) {
                 System.out.print("输入长度（不能大于" + limit + "）错误，请重新输入：");
                 continue;
             }
