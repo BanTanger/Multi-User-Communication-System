@@ -2,6 +2,13 @@
 
 ![img](https://api2.mubu.com/v3/document_image/05059ff0-99b1-47c7-a36f-02221b72b35f-7239137.jpg)
 
+# 如何执行文件
+
+1. 下载文件包，QQServer和QQClient同时打开（两个项目）
+2. 找到QQServer/QQFrame 和 QQClient/QQView
+3. 先执行QQServer/QQFrame打开服务端
+4. 再执行QQClient/QQView打开客户端
+
 ## 需求分析
 1. 用户登陆
 2. 拉取在线用户列表
